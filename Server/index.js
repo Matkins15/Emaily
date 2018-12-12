@@ -1,8 +1,11 @@
 const express = require('express');
 const app = express();
 
+// '/' === route route
 app.get('/', (req, res) => {
     res.send({hi: 'there'});
 });
 
-app.listen(5000);
+// dynamic port: environment variable used by heroku to indentify a port || locally on port 5000
+const PORT = process.eventNames.PORT || 5000
+app.listen(PORT);
