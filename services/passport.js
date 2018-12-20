@@ -16,8 +16,15 @@ passport.use(
             callbackURL: "/auth/google/callback"
         },
         (accessToken, refreshToken, profile, done) => {
-            // takes the user model instance and saves it to our database
-            new User({ googleId: profile.id }).save();
+            User.findOne({googleId: profile.id}).then((existingUser) => {
+                if(existingUser) {
+
+                } else {
+                    // takes the user model instance and saves it to our database
+                    new User({ googleId: profile.id }).save();
+                }
+            })
+ 
         }
     )
 );
