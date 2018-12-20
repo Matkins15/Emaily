@@ -8,6 +8,17 @@ const keys = require("../config/keys");
 // User is our model class
 const User = mongoose.model('users');
 
+passport.serializeUser((user, done) => {
+    // user.id is the shortcut to the user _id.$oid in mongo
+    done(null, user.id);
+});
+
+passport.deserializeUser((userId, done) => {
+    User.findById(userId).then(user => {
+        done(null, user)
+    });
+});
+
 passport.use(
     new GoogleStrategy(
         {
@@ -18,13 +29,12 @@ passport.use(
         (accessToken, refreshToken, profile, done) => {
             User.findOne({googleId: profile.id}).then((existingUser) => {
                 if(existingUser) {
-
+                    done(null, existingUser);
                 } else {
                     // takes the user model instance and saves it to our database
-                    new User({ googleId: profile.id }).save();
+                    new User({ googleId: profile.id }).save().then(user => done(null, user));
                 }
-            })
- 
+            });
         }
     )
 );
